@@ -1,6 +1,9 @@
 # Me
 *.swo
 *.swp
+*.in
+*.out
+*.txt
 
 # Github
 #
