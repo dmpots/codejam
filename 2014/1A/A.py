@@ -14,8 +14,8 @@ def flipv(s):
 def flip(col):
   return [flipv(i) for i in col]
 
-def numify(row):
-  return int("".join(map(str,row)),2)
+def numify(socket):
+  return int(socket, 2)
 
 def normalize(sockets):
   return sorted(map(numify, sockets))
@@ -23,25 +23,19 @@ def normalize(sockets):
 def apply_flips(flips, sockets):
   results = []
   for s in sockets:
-    res = []
-    for (i,v) in enumerate(s):
-      if i in flips:
-        res.append(flipv(v))
-      else:
-        res.append(v)
-    results.append("".join(res))
+    results.append(s ^ flips)
   return results
 
 class Case:
   def __init__(self, i, start, goal):
     self.i = i
-    self.start = start
-    self.goal = goal
+    self.start = normalize(start)
+    self.goal = normalize(goal)
     self.sorted_goal = normalize(goal)
     self.cached_flips = set()
 
   def is_sol(self,config):
-    return normalize(config) == self.sorted_goal
+    return sorted(config) == self.sorted_goal
 
   def findbest(self):
     start = self.start
@@ -52,16 +46,15 @@ class Case:
     for g_row in self.goal:
       for s_row in self.start:
         flips = []
-        for (i,s) in enumerate(s_row):
-          if g_row[i] != s:
-            flips.append(i)
-        #print("{}: f:{} s:{} fd:{}".format(self.i,flips, start,flipped))
-        flips = tuple(flips)
-        if len(flips) == 0 or flips in self.cached_flips:
+        flips = g_row ^ s_row
+
+        if flips in self.cached_flips:
           continue
+        
         flipped = apply_flips(flips, start)
-        if self.is_sol(apply_flips(flips, start)):
-          num_flips.append(len(flips))
+        #print("s: {}, f: {}, fd:{} = {}".format(list(map(bin,start)), flips, list(map(bin,flipped)), sorted(flipped)))
+        if self.is_sol(flipped):
+          num_flips.append(bin(flips).count("1"))
         self.cached_flips.add(flips)
 
     if len(num_flips) == 0:
@@ -69,6 +62,7 @@ class Case:
     return min(num_flips)
 
   def solve(self):
+    print(self.i)
     s = self.findbest()
     if s == -1:
       sol="NOT POSSIBLE"
