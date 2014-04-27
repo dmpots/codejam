@@ -2,6 +2,7 @@
 import sys
 import pprint
 import argparse
+from operator import attrgetter, methodcaller, itemgetter
 
 debug = False
 def log(msg, *args):
@@ -39,8 +40,8 @@ class Case:
 
 def parse_input(stream):
   cases = []
-  N = int(stream.readline())
-  for i in range(1, N+1):
+  T = int(stream.readline())
+  for i in range(1, T+1):
     # parse case input
     cases.append(Case(i))
   return cases
@@ -51,6 +52,7 @@ def main():
   for case in cases:
     if not options.case or options.case == case.i:
       print(case.solve())
+      sys.stdout.flush()
 
 
 main()
