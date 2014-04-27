@@ -75,17 +75,19 @@ def build_tree(root, edges):
   return tree
   #return dfs(root, set())
 
-def prune_tree(root):
+def balanced_tree_size(root):
   def dfs(node):
     log("N: {}", node.node)
-    if len(node.children) == 0 or len(node.children) == 2:
-      return sum([dfs(c) for c in node.children])
-    if len(node.children) == 1:
-      return node.children[0].size
+    if len(node.children) == 0 or len(node.children) == 1:
+      return 1
     
-    cs = [(c.size, dfs(c)) for c in node.children]
-    cs.sort(key=lambda x: (x[0], x[0]-x[1]), reverse=True)
-    return cs[0][1] + cs[1][1] + sum(map(itemgetter(0), cs[2:]))
+    cs = [dfs(c) for c in node.children]
+    cs.sort(reverse=True)
+    return 1 + cs[0] + cs[1]
+
+    #cs = [(c.size, dfs(c)) for c in node.children]
+    #cs.sort(key=lambda x: (x[0], x[0]-x[1]), reverse=True)
+    #return cs[0][1] + cs[1][1] + sum(map(itemgetter(0), cs[2:]))
 
 
     #childs = sorted(node.children, key=attrgetter('size'), reverse=True)
@@ -101,12 +103,13 @@ class Case:
   def solve(self):
     log("Solving: {}", self)
     counts = []
+    num_nodes = len(self.edges.keys())
     for n in self.edges.keys():
       tree = build_tree(n, self.edges)
-      cnt = prune_tree(tree)
+      size = balanced_tree_size(tree)
       #print_tree(tree)
-      log("####{}",cnt)
-      counts.append(cnt)
+      log("####{}",size)
+      counts.append(num_nodes - size)
 
     sol = str(min(counts))
     return self.case() + sol
