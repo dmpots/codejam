@@ -4,6 +4,7 @@
 *.in
 *.out
 *.txt
+_T*
 
 # Github
 #
