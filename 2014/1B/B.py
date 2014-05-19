@@ -32,6 +32,19 @@ def solve_brute(a, b, k):
         cnt += 1
   return cnt
 
+def solve_large(a, b, k):
+  mi = min(a, b)
+  ma = max(a, b)
+  if mi < k or mi < k:
+    return a * b
+
+  cnt = 0
+  for aa in range(k, mi):
+    for bb in range(ma):
+      if (aa & bb) < k:
+        cnt += 1
+  return cnt + ma*k
+
 class Case:
   def __init__(self, i, a, b, k):
     self.i = i
@@ -41,7 +54,8 @@ class Case:
 
   def solve(self):
     log("Solving: {}", self)
-    ans = solve_brute(self.a, self.b, self.k)
+    #ans = solve_brute(self.a, self.b, self.k)
+    ans = solve_large(self.a, self.b, self.k)
     sol = str(ans)
     return self.case() + sol
 
@@ -49,7 +63,7 @@ class Case:
     return "Case #{}: ".format(self.i)
 
   def __repr__(self):
-    return self.case()
+    return self.case() + "{},{},{}".format(self.a,self.b,self.k)
 
 def parse_input(stream):
   cases = []
